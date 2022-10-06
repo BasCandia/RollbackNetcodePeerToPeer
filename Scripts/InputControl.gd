@@ -52,6 +52,11 @@ func _ready():
 
 func _physics_process(_delta):
 	handle_input() 
+	#Seteo y modificacion por Frame del Contador de Frames y FPS
+	var Frame_Counter_Label = get_parent().get_node("Frame_Counter_Label")
+	var FPS = get_parent().get_node("FPS")
+	Frame_Counter_Label.text = "Frame Counter: " + str(frame_count)
+	FPS.text = "FPS: " + str(Engine.get_frames_per_second())
 
 
 func handle_input(): #get inputs, call child functions
@@ -70,7 +75,6 @@ func handle_input(): #get inputs, call child functions
 
 	input_array[(frame_num + input_delay) % 256].local_input = local_input
 	frame_count += 1
-	print(frame_count)
 
 	var current_input = input_array[frame_num].duplicate()
 	

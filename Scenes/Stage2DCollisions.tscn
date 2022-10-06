@@ -49,6 +49,7 @@ position = Vector2( 40, 300 )
 scale = Vector2( 4, 10 )
 
 [node name="Background" parent="." instance=ExtResource( 4 )]
+light_mask = 2
 
 [node name="TileMap" type="TileMap" parent="."]
 visible = false
@@ -56,3 +57,12 @@ tile_set = SubResource( 1 )
 cell_custom_transform = Transform2D( 32, 0, 0, 32, 0, 0 )
 format = 1
 tile_data = PoolIntArray( 524288, 0, 0, 524289, 0, 0, 524290, 0, 0, 524291, 0, 0, 524292, 0, 0, 524293, 0, 0, 524294, 0, 0, 524295, 0, 0, 524296, 0, 0, 524297, 0, 0, 524298, 0, 0, 524299, 0, 0, 524300, 0, 0, 524301, 0, 0, 524302, 0, 0, 524303, 0, 0, 589824, 0, 0, 589825, 0, 0, 589826, 0, 0, 589827, 0, 0, 589828, 0, 0, 589829, 0, 0, 589830, 0, 0, 589831, 0, 0, 589832, 0, 0, 589833, 0, 0, 589834, 0, 0, 589835, 0, 0, 589836, 0, 0, 589837, 0, 0, 589838, 0, 0, 589839, 0, 0 )
+
+[node name="Frame_Counter_Label" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 14.0
+
+[node name="FPS" type="Label" parent="."]
+margin_top = 16.0
+margin_right = 40.0
+margin_bottom = 30.0
