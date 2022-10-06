@@ -7,6 +7,7 @@ var input_delay = 1
 var rollback = 7
 
 var frame_num = 0 #ranges between 0-255 per circular input array cycle (cycle is every 256 frames)
+var frame_count = 0 #contador de frames
 
 var input_array = [] #array to hold 256 Inputs
 var state_queue = [] #queue for Frame_States of past frames (for rollback)
@@ -15,9 +16,9 @@ var canReset = true #for testing state reset
 
 #---classes---
 class Inputs:
-	#Indexing [0]: W, [1]: A, [2]: S, [3]: D, [4]: SPACE
+	#Indexing [0]: A, [1]: D, [2]: SPACE
 	#inputs by local player for a single frame
-	var local_input = [false, false, false, false, false]
+	var local_input = [false, false, false]
 	
 	func duplicate():
 		var duplicate = Inputs.new()
@@ -59,19 +60,17 @@ func handle_input(): #get inputs, call child functions
 	frame_start_all()
 	
 	#record local inputs
-	var local_input = [false, false, false, false, false]
-	if Input.is_key_pressed(KEY_W):
-		local_input[0] = true
+	var local_input = [false, false, false]
 	if Input.is_key_pressed(KEY_A):
-		local_input[1] = true
-	if Input.is_key_pressed(KEY_S):
-		local_input[2] = true
+		local_input[0] = true
 	if Input.is_key_pressed(KEY_D):
-		local_input[3] = true
+		local_input[1] = true
 	if Input.is_key_pressed(KEY_SPACE):
-		local_input[4] = true
+		local_input[2] = true
 
 	input_array[(frame_num + input_delay) % 256].local_input = local_input
+	frame_count += 1
+	print(frame_count)
 
 	var current_input = input_array[frame_num].duplicate()
 	

@@ -33,19 +33,13 @@ func input_update(input):
 	#calculate state of object for the given input
 	var vect = Vector2(0, 0)
 	
-	if input.local_input[0]: #W
-		vect.y -= 7
-		
-	if input.local_input[1]: #A
+	if input.local_input[0]: #A
 		vect.x -= 7
 		
-	if input.local_input[2]: #S
-		vect.y += 7
-		
-	if input.local_input[3]: #D
+	if input.local_input[1]: #D
 		vect.x += 7
 		
-	if input.local_input[4]: #SPACE
+	if input.local_input[2]: #SPACE
 		counter = counter/2
 
 	#move_and_collide for "solid" stationary objects
