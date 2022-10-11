@@ -34,10 +34,10 @@ func input_update(input):
 	var vect = Vector2(0, 0)
 	
 	if input.local_input[0]: #A
-		vect.x -= 7
+		vect.x -= 10
 		
 	if input.local_input[1]: #D
-		vect.x += 7
+		vect.x += 10
 		
 	if input.local_input[2]: #SPACE
 		counter = counter/2

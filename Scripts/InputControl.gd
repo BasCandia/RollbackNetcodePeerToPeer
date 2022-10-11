@@ -12,6 +12,15 @@ var frame_count = 0 #contador de frames
 var input_array = [] #array to hold 256 Inputs
 var state_queue = [] #queue for Frame_States of past frames (for rollback)
 
+#Pruebas
+var frame_ms_array = [] #Index es el numero de frame guardado, valor ping en ms 
+#[NroPrueba][Frame] = valor de ms
+var flag_ms_array = false #Si este cambia a true, se comenzara a guardar datos
+var nro_prueba = 0
+const MINUTO_FPS = 3600 #3600 frames a 60 fps es un minuto, para realizar pruebas y guardar valores de ping
+const CANT_PRUEBAS = 10 # 1-> 50ms 2->100ms 30->150ms y asi
+var frame_count_test = 0
+
 var canReset = true #for testing state reset
 
 #---classes---
@@ -48,6 +57,13 @@ func _ready():
 	for _x in range (0, rollback):
 		#empty input, frame 0, inital game state
 		state_queue.append(Frame_State.new(Inputs.new(), 0, get_game_state()))
+	
+	for _x in range(0,CANT_PRUEBAS):
+		var row = []
+		for _y in range(0,MINUTO_FPS):
+			var column = []
+			row.append(column)
+		frame_ms_array.append(row)
 
 
 func _physics_process(_delta):
@@ -57,7 +73,15 @@ func _physics_process(_delta):
 	var FPS = get_parent().get_node("FPS")
 	Frame_Counter_Label.text = "Frame Counter: " + str(frame_count)
 	FPS.text = "FPS: " + str(Engine.get_frames_per_second())
-
+	#Recopilar datos de prueba
+	if flag_ms_array == true:
+		if frame_count_test < MINUTO_FPS:
+			frame_ms_array[nro_prueba-1][frame_count_test] = 1 #el 1 es un holder, cambiar por valor de ms obtenido en conexion
+			print("Se recopilo dato de Frame: "+ str(frame_count_test))
+		else:
+			print("Prueba Concluida")
+			
+		frame_count_test += 1
 
 func handle_input(): #get inputs, call child functions
 	var pre_game_state = get_game_state()
@@ -72,6 +96,17 @@ func handle_input(): #get inputs, call child functions
 		local_input[1] = true
 	if Input.is_key_pressed(KEY_SPACE):
 		local_input[2] = true
+	if Input.is_action_just_pressed("test_inicio"):
+		nro_prueba += 1
+		print("Prueba Nro: "+ str(nro_prueba))
+		flag_ms_array = true
+	if Input.is_action_just_pressed("test_fin"):
+		print("Fin de la prueba Nro: "+ str(nro_prueba))
+		frame_count_test = 0
+		flag_ms_array = false
+	if Input.is_action_just_pressed("GuardarDatos"):
+		GuardarDatos()
+	
 
 	input_array[(frame_num + input_delay) % 256].local_input = local_input
 	frame_count += 1
@@ -80,6 +115,7 @@ func handle_input(): #get inputs, call child functions
 	
 	#testing resetting of state
 	if Input.is_key_pressed(KEY_ENTER):
+# warning-ignore:standalone_expression
 		canReset && reset_state_all(state_queue[0].game_state)
 		canReset = false
 	else:
@@ -122,3 +158,15 @@ func get_game_state():
 	for child in get_children():
 		state[child.name] = child.get_state()
 	return state.duplicate(true) #deep duplicate to copy all nested dictionaries by value
+
+func GuardarDatos():
+	var texto = ""
+	for x in range (0,nro_prueba):
+		texto = texto + "Prueba " + str(x) + "\n"
+		for y in range(0, MINUTO_FPS):
+			texto = texto + "Frame: "+ str(y+1)+ " Ping: "+ str(frame_ms_array[nro_prueba-1][y]) + "\n"
+		texto = texto + "\n"
+	var file = File.new()
+	file.open("res://Test.txt", File.WRITE)
+	file.store_string(texto)
+	file.close()
