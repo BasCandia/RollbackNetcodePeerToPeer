@@ -162,7 +162,7 @@ func get_game_state():
 func GuardarDatos():
 	var texto = ""
 	for x in range (0,nro_prueba):
-		texto = texto + "Prueba " + str(x) + "\n"
+		texto = texto + "Prueba " + str(x+1) + "\n"
 		for y in range(0, MINUTO_FPS):
 			texto = texto + "Frame: "+ str(y+1)+ " Ping: "+ str(frame_ms_array[nro_prueba-1][y]) + "\n"
 		texto = texto + "\n"
