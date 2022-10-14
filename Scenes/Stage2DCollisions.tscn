@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Scripts/InputControl.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Player2DCollisions.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Scenes/Background.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Scenes/Wall2DCollisions.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Sprites/wall.png" type="Texture" id=6]
+[ext_resource path="res://Scenes/NetPlayer.tscn" type="PackedScene" id=7]
 
 [sub_resource type="TileSet" id=1]
 0/name = "wall.png 0"
@@ -32,24 +33,32 @@ script = ExtResource( 1 )
 position = Vector2( 368, 440 )
 script = ExtResource( 3 )
 
+[node name="NetPlayer" parent="." instance=ExtResource( 7 )]
+position = Vector2( 656, 440 )
+
 [node name="StaticBody2D" parent="." instance=ExtResource( 5 )]
+visible = false
 position = Vector2( 513, 30 )
 scale = Vector2( 50, 1 )
 
 [node name="StaticBody2D2" parent="." instance=ExtResource( 5 )]
+visible = false
 position = Vector2( 520, 557 )
 scale = Vector2( 50, 1.5 )
 
 [node name="StaticBody2D3" parent="." instance=ExtResource( 5 )]
+visible = false
 position = Vector2( 984, 300 )
 scale = Vector2( 4, 10 )
 
 [node name="StaticBody2D4" parent="." instance=ExtResource( 5 )]
+visible = false
 position = Vector2( 40, 300 )
 scale = Vector2( 4, 10 )
 
 [node name="Background" parent="." instance=ExtResource( 4 )]
 light_mask = 2
+z_index = -1
 
 [node name="TileMap" type="TileMap" parent="."]
 visible = false
