@@ -25,9 +25,9 @@ var canReset = true #for testing state reset
 
 #---classes---
 class Inputs:
-	#Indexing [0]: A, [1]: D, [2]: SPACE
+	#Indexing [0]: A, [1]: D,[2]: W, [3]: SPACE
 	#inputs by local player for a single frame
-	var local_input = [false, false, false]
+	var local_input = [false, false, false, false]
 	
 	func duplicate():
 		var duplicate = Inputs.new()
@@ -89,13 +89,15 @@ func handle_input(): #get inputs, call child functions
 	frame_start_all()
 	
 	#record local inputs
-	var local_input = [false, false, false]
+	var local_input = [false, false, false, false]
 	if Input.is_key_pressed(KEY_A):
 		local_input[0] = true
 	if Input.is_key_pressed(KEY_D):
 		local_input[1] = true
-	if Input.is_key_pressed(KEY_SPACE):
+	if Input.is_key_pressed(KEY_W):
 		local_input[2] = true
+	if Input.is_key_pressed(KEY_SPACE):
+		local_input[3] = true
 	if Input.is_action_just_pressed("test_inicio"):
 		nro_prueba += 1
 		print("Prueba Nro: "+ str(nro_prueba))

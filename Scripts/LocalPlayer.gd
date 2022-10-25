@@ -1,10 +1,15 @@
 #By Jon Chau
 extends KinematicBody2D
 
+const GRAVITY = 10
+const JUMP_HEIGHT = -190
+
 var counter = -1 #testing value
 var rectExtents = null
 var collisionMask = null
 var label = null
+#salto
+var canJump = true
 
 func _ready(): 
 	label = get_node("Label")
@@ -32,15 +37,22 @@ func frame_start():
 func input_update(input):
 	#calculate state of object for the given input
 	var vect = Vector2(0, 0)
-	
+	vect.y += GRAVITY
 	if input.local_input[0]: #A
 		vect.x -= 10
 		
 	if input.local_input[1]: #D
 		vect.x += 10
 		
-	if input.local_input[2]: #SPACE
+	if ($RayCastFloor.is_colliding()):
+			canJump = true
+	if input.local_input[2]: #W JUMP
+		if(canJump):
+			canJump=false
+			vect.y = JUMP_HEIGHT
+	if input.local_input[3]: #SPACE
 		counter = counter/2
+		
 
 	#move_and_collide for "solid" stationary objects
 	var collision = move_and_collide(vect)
