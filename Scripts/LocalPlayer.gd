@@ -1,8 +1,9 @@
 #By Jon Chau
 extends KinematicBody2D
 
-const GRAVITY = 10
-const JUMP_HEIGHT = -190
+const GRAVITY = 5
+const JUMP_HEIGHT = -16
+var vect = Vector2(0, 0)
 
 var counter = -1 #testing value
 var rectExtents = null
@@ -36,14 +37,17 @@ func frame_start():
 
 func input_update(input):
 	#calculate state of object for the given input
-	var vect = Vector2(0, 0)
-	vect.y += GRAVITY
+
+	vect.y += GRAVITY*0.1666667 #Valor es lo que deberia ser delta ya que uso move and collide
 	if input.local_input[0]: #A
-		vect.x -= 10
+		vect.x = -7
 		
-	if input.local_input[1]: #D
-		vect.x += 10
+	elif input.local_input[1]: #D
+		vect.x = 7
 		
+	else: 
+		vect.x = 0
+	
 	if ($RayCastFloor.is_colliding()):
 			canJump = true
 	if input.local_input[2]: #W JUMP
