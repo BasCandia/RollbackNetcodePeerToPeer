@@ -3,8 +3,7 @@ extends "res://Scripts/LocalPlayer.gd"
 
 func input_update(input, game_state):
 	#calculate state of object for the given input
-	var vect = Vector2(0, 0)
-	vect.y += GRAVITY
+	vect.y += GRAVITY*0.1666667
 
 	#Quisas no necesite este trozo en mi version
 	#Collision detection for moving objects that can pass through each other
@@ -14,17 +13,17 @@ func input_update(input, game_state):
 				updateCounter += 1
 
 	if input.net_input[3]: #A
-		vect.x += 10
-
-	if input.net_input[1]: #D
-		vect.x -= 10
-
+		vect.x = 7
+	elif input.net_input[1]: #D
+		vect.x = -7
+	else:
+		vect.x = 0
 	if ($RayCastFloor.is_colliding()):
 		canJump = true
 	if input.net_input[0]: #W JUMP
 		if(canJump):
 			canJump=false
-			vect.y += JUMP_HEIGHT
+			vect.y = JUMP_HEIGHT
 	if input.local_input[3]: #SPACE
 		counter = counter/2
 
