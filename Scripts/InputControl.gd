@@ -2,7 +2,7 @@
 extends Node
 
 #amount of input delay in frames
-var input_delay = 5 
+var input_delay = 1 
 #number of frame states to save in order to implement rollback (max amount of frames able to rollback)
 var rollback = 7 
 #frame range of duplicate past input packets to send every frame (should be less than rollback)
@@ -37,7 +37,7 @@ var frame_ms_array = [] #Index es el numero de frame guardado, valor ping en ms
 var flag_ms_array = false #Si este cambia a true, se comenzara a guardar datos
 var nro_prueba = 0
 const MINUTO_FPS = 3600 #3600 frames a 60 fps es un minuto, para realizar pruebas y guardar valores de ping
-const CANT_PRUEBAS = 10 # 1-> 50ms 2->100ms 30->150ms y asi
+const CANT_PRUEBAS = 10 # 1-> 25ms 2->50ms 3->75ms y asi
 var frame_count_test = 0
 var frame_count = 0
 
@@ -151,8 +151,8 @@ func _ready():
 	input_received = false #network thread will set to true when a networked player is found.
 	
 	#set up networking thread
-	UDPPeer.listen(241, "*")
-	UDPPeer.set_dest_address("::1", 240) #::1 is localhost
+	UDPPeer.listen(240, "*")
+	UDPPeer.set_dest_address("::1", 241) #::1 is localhost
 	input_thread = Thread.new()
 	input_thread.start(self, "thr_network_inputs", null, 2)
 
@@ -166,9 +166,19 @@ func _physics_process(_delta):
 			input_received_mutex.unlock()
 			UDPPeer.put_packet(PoolByteArray([1, state_queue[0].frame, (frame_num + 1)%256])) #send request for needed input
 			status = "DELAY: Waiting for net input. frame_num: " + str(frame_num)
+			frame_count_test += 1
 		else:
 			input_received_mutex.unlock()
 			status = ""
+			#Recopilar datos de prueba
+			if flag_ms_array == true:
+				if frame_count_test < MINUTO_FPS:
+					frame_ms_array[nro_prueba-1][frame_count_test] = 25*nro_prueba #el 1 es un holder, cambiar por valor de ms obtenido en conexion
+					print("Se recopilo dato de Frame: "+ str(frame_count_test))
+				else:
+					print("Prueba Concluida")
+					
+				frame_count_test += 1
 			handle_input()
 	else:
 		input_received_mutex.unlock()
@@ -182,15 +192,7 @@ func _physics_process(_delta):
 	var FPS = get_parent().get_node("FPS")
 	Frame_Counter_Label.text = "Frame Counter: " + str(frame_count)
 	FPS.text = "FPS: " + str(Engine.get_frames_per_second())
-	#Recopilar datos de prueba
-	if flag_ms_array == true:
-		if frame_count_test < MINUTO_FPS:
-			frame_ms_array[nro_prueba-1][frame_count_test] = 1 #el 1 es un holder, cambiar por valor de ms obtenido en conexion
-			print("Se recopilo dato de Frame: "+ str(frame_count_test))
-		else:
-			print("Prueba Concluida")
-			
-		frame_count_test += 1
+	
 
 func handle_input(): #get inputs, call child functions
 	var pre_game_state = get_game_state()
@@ -301,7 +303,7 @@ func GuardarDatos():
 	for x in range (0,nro_prueba):
 		texto = texto + "Prueba " + str(x+1) + "\n"
 		for y in range(0, MINUTO_FPS):
-			texto = texto + "Frame: "+ str(y+1)+ " Ping: "+ str(frame_ms_array[nro_prueba-1][y]) + "\n"
+			texto = texto + "Frame: "+ str(y+1)+ " Ping: "+ str(frame_ms_array[x][y]) + "\n"
 		texto = texto + "\n"
 	var file = File.new()
 	file.open("res://Test.txt", File.WRITE)
