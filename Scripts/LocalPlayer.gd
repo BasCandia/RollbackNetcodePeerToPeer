@@ -50,10 +50,10 @@ func input_update(input, game_state : Dictionary):
 				updateCounter += 1
 	
 	if input.local_input[0]: #A
-		vect.x = -7
+		vect.x = -8
 		
 	elif input.local_input[1]: #D
-		vect.x = 7
+		vect.x = 8
 		
 	else: 
 		vect.x = 0

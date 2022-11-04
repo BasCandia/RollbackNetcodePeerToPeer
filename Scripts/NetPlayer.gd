@@ -13,9 +13,9 @@ func input_update(input, game_state):
 				updateCounter += 1
 
 	if input.net_input[3]: #A
-		vect.x = 7
+		vect.x = 8
 	elif input.net_input[1]: #D
-		vect.x = -7
+		vect.x = -8
 	else:
 		vect.x = 0
 	if ($RayCastFloor.is_colliding()):

@@ -221,11 +221,13 @@ func handle_input(): #get inputs, call child functions
 	
 	#record local inputs
 	if Input.is_key_pressed(KEY_A): #Posible error en encoded_local_input
-		local_input[0] = true
-		encoded_local_input += 2
+		if !(Input.is_key_pressed(KEY_D)):
+			local_input[0] = true
+			encoded_local_input += 2
 	if Input.is_key_pressed(KEY_D):
-		local_input[1] = true
-		encoded_local_input += 8
+		if !(Input.is_key_pressed(KEY_A)):
+			local_input[1] = true
+			encoded_local_input += 8
 	if Input.is_key_pressed(KEY_W):
 		local_input[2] = true
 		encoded_local_input += 1
