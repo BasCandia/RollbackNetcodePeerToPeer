@@ -1,4 +1,4 @@
-#By Jon Chau
+#Basado en Proyecto de Jon Chau
 extends Node
 
 var inputControl

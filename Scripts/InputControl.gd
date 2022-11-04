@@ -1,12 +1,14 @@
-#By Jon Chau
+#Basado en Proyecto de Jon Chau
 extends Node
 
 #amount of input delay in frames
-var input_delay = 1 
+var input_delay = 5 
 #number of frame states to save in order to implement rollback (max amount of frames able to rollback)
 var rollback = 7 
 #frame range of duplicate past input packets to send every frame (should be less than rollback)
 var dup_send_range = 5
+#amount of input packets to send per frame
+var packet_amount = 5
 
 #tracks current game status
 enum Game {WAITING, PLAYING, END}
@@ -100,7 +102,8 @@ func thr_network_inputs(_userdata): #thread function to read inputs from network
 						while (frame != result[2]): #send inputs for requested frame and newer past frames
 							if input_viable_request_array[frame] == false: 
 								break #do not send invalid inputs from future frames
-							UDPPeer.put_packet(PoolByteArray([0, frame, input_array[frame].encoded_local_input]))
+							for _x in range(packet_amount):
+								UDPPeer.put_packet(PoolByteArray([0, frame, input_array[frame].encoded_local_input]))
 							frame = (frame + 1)%256
 						input_viable_request_array_mutex.unlock()
 				
@@ -112,7 +115,9 @@ func thr_network_inputs(_userdata): #thread function to read inputs from network
 							game = Game.PLAYING
 							input_received_mutex.unlock()
 						elif (result[1] == 0):
-							UDPPeer.put_packet(PoolByteArray([2, 1])) #send ready handshake to opponent
+							#input_received_mutex.unlock()
+							for _x in range(packet_amount):
+								UDPPeer.put_packet(PoolByteArray([2, 1])) #send ready handshake to opponent
 				
 				3: #game end
 					if game == Game.PLAYING:
@@ -151,8 +156,8 @@ func _ready():
 	input_received = false #network thread will set to true when a networked player is found.
 	
 	#set up networking thread
-	UDPPeer.listen(240, "*")
-	UDPPeer.set_dest_address("::1", 241) #::1 is localhost
+	UDPPeer.listen(7700, "*")
+	UDPPeer.set_dest_address("::1", 7701) #::1 is localhost
 	input_thread = Thread.new()
 	input_thread.start(self, "thr_network_inputs", null, 2)
 
@@ -164,7 +169,8 @@ func _physics_process(_delta):
 		if input_arrival_array[frame_num] == false:
 			input_received = false #wait until actual net input is received
 			input_received_mutex.unlock()
-			UDPPeer.put_packet(PoolByteArray([1, state_queue[0].frame, (frame_num + 1)%256])) #send request for needed input
+			for _x in range(packet_amount):
+				UDPPeer.put_packet(PoolByteArray([1, state_queue[0].frame, (frame_num + 1)%256])) #send request for needed input
 			status = "DELAY: Waiting for net input. frame_num: " + str(frame_num)
 			frame_count_test += 1
 		else:
@@ -180,12 +186,21 @@ func _physics_process(_delta):
 					
 				frame_count_test += 1
 			handle_input()
+	#else:
+	#	input_received_mutex.unlock()
+	#	if (game == Game.WAITING): #search for networked player
+	#		UDPPeer.put_packet(PoolByteArray([2, 0])) #send ready handshake to opponent
+	#	else:#send request for needed inputs for past frames
+	#		UDPPeer.put_packet(PoolByteArray([1, state_queue[0].frame, (frame_num + 1)%256])) #send request for needed input
+	elif (game == Game.PLAYING):#send request for needed inputs for past frames
+		input_received_mutex.unlock()
+		for _x in range(packet_amount):
+			UDPPeer.put_packet(PoolByteArray([1, frame_num, (frame_num + input_delay)%256])) #send request for needed input
+	elif (game == Game.WAITING): #search for networked game instance
+		input_received_mutex.unlock()
+		UDPPeer.put_packet(PoolByteArray([2, 0])) #send ready handshake to networked player
 	else:
 		input_received_mutex.unlock()
-		if (game == Game.WAITING): #search for networked player
-			UDPPeer.put_packet(PoolByteArray([2, 0])) #send ready handshake to opponent
-		else:#send request for needed inputs for past frames
-			UDPPeer.put_packet(PoolByteArray([1, state_queue[0].frame, (frame_num + 1)%256])) #send request for needed input
 	
 	#Seteo y modificacion por Frame del Contador de Frames y FPS
 	var Frame_Counter_Label = get_parent().get_node("Frame_Counter_Label")
@@ -239,8 +254,9 @@ func handle_input(): #get inputs, call child functions
 	
 	#send inputs over network
 	for i in dup_send_range + 1: #send inputs for current frame as well as duplicates of past frame inputs
-		UDPPeer.put_packet(PoolByteArray([0, (frame_num + input_delay - i) % 256,
-				input_array[(frame_num + input_delay - i) % 256].encoded_local_input]))
+		for _x in packet_amount: #Posiblemente distinto
+			UDPPeer.put_packet(PoolByteArray([0, (frame_num + input_delay - i) % 256,
+					input_array[(frame_num + input_delay - i) % 256].encoded_local_input]))
 	
 	input_array_mutex.unlock()
 	

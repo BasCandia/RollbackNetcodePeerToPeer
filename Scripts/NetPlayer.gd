@@ -1,4 +1,4 @@
-#By Jon Chau
+#Basado en Proyecto de Jon Chau
 extends "res://Scripts/LocalPlayer.gd"
 
 func input_update(input, game_state):

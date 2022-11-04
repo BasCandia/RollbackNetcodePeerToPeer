@@ -1,4 +1,4 @@
-#By Jon Chau
+#Basado en Proyecto de Jon Chau
 extends KinematicBody2D
 
 const GRAVITY = 5
@@ -81,10 +81,9 @@ func execute():
 	counter = updateCounter
 	label.text = str(counter)
 
-#Elimina esta funcion
-#func frame_end():
-#	#code to run at end of frame (after all input_update calls)
-#	label.text = str(counter)
+func frame_end():
+	#code to run at end of frame (after all input_update calls)
+	label.text = str(counter)
 
 func get_state():
 	#return dict of state variables to be stored in Frame_States
