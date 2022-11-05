@@ -2,7 +2,7 @@
 extends Node
 
 #amount of input delay in frames
-var input_delay = 1 
+var input_delay = 5
 #number of frame states to save in order to implement rollback (max amount of frames able to rollback)
 var rollback = 7 
 #frame range of duplicate past input packets to send every frame (should be less than rollback)
