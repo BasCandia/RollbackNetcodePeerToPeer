@@ -2,7 +2,7 @@
 extends Node
 
 #amount of input delay in frames
-var input_delay = 5 
+var input_delay = 1 
 #number of frame states to save in order to implement rollback (max amount of frames able to rollback)
 var rollback = 7 
 #frame range of duplicate past input packets to send every frame (should be less than rollback)
@@ -157,7 +157,7 @@ func _ready():
 	
 	#set up networking thread
 	UDPPeer.listen(7700, "*")
-	UDPPeer.set_dest_address("::1", 7701) #::1 is localhost
+	UDPPeer.set_dest_address("::1", 7700) #::1 is localhost
 	input_thread = Thread.new()
 	input_thread.start(self, "thr_network_inputs", null, 2)
 
