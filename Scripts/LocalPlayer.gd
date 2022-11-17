@@ -4,6 +4,7 @@ extends KinematicBody2D
 const GRAVITY = 5
 const JUMP_HEIGHT = -16
 var vect = Vector2(0, 0)
+const UP = Vector2(0,-1)
 
 var counter = -1 #testing value
 var updateCounter = counter
@@ -26,16 +27,16 @@ func reset_state(game_state : Dictionary):
 	if game_state.has(name):
 		position.x = game_state[name]['x']
 		position.y = game_state[name]['y']
-		updateCounter = game_state[name]['counter']
+		counter = game_state[name]['counter']
 		collisionMask = game_state[name]['collisionMask']
 	else:
-		free() #delete from memory
+		free()
 
 
 func frame_start():
-	#set update vars to current values
-	updateCounter = counter
+	#code to run at beginning of frame
 	collisionMask = Rect2(Vector2(position.x - rectExtents.x, position.y - rectExtents.y), Vector2(rectExtents.x, rectExtents.y) * 2)
+
 
 
 func input_update(input, game_state : Dictionary):
@@ -58,7 +59,8 @@ func input_update(input, game_state : Dictionary):
 	else: 
 		vect.x = 0
 	
-	if ($RayCastFloor.is_colliding()):
+	#if ($RayCastFloor.is_colliding()):
+	if (is_on_floor()):
 			canJump = true
 	if input.local_input[2]: #W JUMP
 		if(canJump):
@@ -68,6 +70,7 @@ func input_update(input, game_state : Dictionary):
 		counter = counter/2
 		
 
+	move_and_slide(vect,UP)
 	#move_and_collide for "solid" stationary objects
 	var collision = move_and_collide(vect)
 	if collision:
@@ -76,15 +79,11 @@ func input_update(input, game_state : Dictionary):
 	
 	collisionMask = Rect2(Vector2(position.x - rectExtents.x, position.y - rectExtents.y), Vector2(rectExtents.x, rectExtents.y) * 2)
 
-func execute():
-	#execute calculated state of object for current frame
-	counter = updateCounter
-	label.text = str(counter)
-
 func frame_end():
 	#code to run at end of frame (after all input_update calls)
 	label.text = str(counter)
 
+
 func get_state():
 	#return dict of state variables to be stored in Frame_States
-	return {'x': position.x, 'y': position.y, 'counter': updateCounter, 'collisionMask': collisionMask}
+	return {'x': position.x, 'y': position.y, 'counter': counter, 'collisionMask': collisionMask}
