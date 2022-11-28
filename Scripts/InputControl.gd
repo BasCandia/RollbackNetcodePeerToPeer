@@ -47,6 +47,9 @@ const MINUTO_FPS = 3600 #3600 frames a 60 fps es un minuto, para realizar prueba
 const CANT_PRUEBAS = 10 # 1-> 25ms 2->50ms 3->75ms y asi
 var frame_count_test = 0
 var frame_count = 0
+var cantidadDeRollback = 0
+var cantidadDeRollbackPrueba = 0
+var cantidadDeRollbackPruebaArray = [] #10 espacios, en cada uno se guardaran los rollbacks por prueba
 
 
 #---classes---
@@ -173,6 +176,7 @@ func _ready():
 		input_viable_request_array[i] = true
 		
 	for _x in range(0,CANT_PRUEBAS):
+		cantidadDeRollbackPruebaArray.append(0)
 		var row = []
 		for _y in range(0,MINUTO_FPS):
 			var column = []
@@ -255,6 +259,11 @@ func _physics_process(_delta):
 	var FPS = get_parent().get_node("FPS")
 	Frame_Counter_Label.text = "Frame Counter: " + str(frame_count)
 	FPS.text = "FPS: " + str(Engine.get_frames_per_second())
+	var VcantidadRollback = get_parent().get_node("CantidadRollback")
+	var VcantidadRollbackPruebas = get_parent().get_node("CantidadRollbackPrueba")
+	VcantidadRollback.text = "Cantidad de Rollbacks: "+ str(cantidadDeRollback)
+	VcantidadRollbackPruebas.text = "Cantidad de Rollback en Prueba: "+ str(cantidadDeRollbackPrueba)
+	
 
 func handle_input(): #get input, call child functions and run rollback if necessary
 	var pre_game_state = null
@@ -288,6 +297,8 @@ func handle_input(): #get input, call child functions and run rollback if necess
 	if Input.is_action_just_pressed("test_fin"):
 		print("Fin de la prueba Nro: "+ str(nro_prueba))
 		frame_count_test = 0
+		cantidadDeRollbackPruebaArray[nro_prueba-1] = cantidadDeRollbackPrueba 
+		cantidadDeRollbackPrueba = 0
 		flag_ms_array = false
 	if Input.is_action_just_pressed("GuardarDatos"):
 		GuardarDatos()
@@ -351,7 +362,10 @@ func handle_input(): #get input, call child functions and run rollback if necess
 					frame_state.inputs.net_input = new_past_actual_input
 					#if first rollback iteration, set update variables for all children to match start state required for rollback
 					if start_rollback == false: 
-						reset_state_all(frame_state.game_state) 
+						reset_state_all(frame_state.game_state)
+						cantidadDeRollback+=1 
+						if(flag_ms_array == true):
+							cantidadDeRollbackPrueba+=1
 						start_rollback = true
 				frame_state.actual_input = true
 			
@@ -412,6 +426,7 @@ func GuardarDatos():
 		texto = texto + "Prueba " + str(x+1) + "\n"
 		for y in range(0, MINUTO_FPS):
 			texto = texto + "Frame: "+ str(y+1)+ " Ping: "+ str(frame_ms_array[x][y]) + "\n"
+		texto = texto + "\n" + "Cantidad de Rollback de Prueba: "+ str(cantidadDeRollbackPruebaArray[x]) + "\n" 
 		texto = texto + "\n"
 	var file = File.new()
 	file.open("res://Test.txt", File.WRITE)
