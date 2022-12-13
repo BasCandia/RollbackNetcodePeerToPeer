@@ -89,3 +89,14 @@ margin_right = 651.0
 margin_bottom = 27.0
 text = "WAITING FOR PEER TO CONNECT"
 align = 1
+
+[node name="Testing" type="Label" parent="."]
+margin_left = 222.0
+margin_right = 262.0
+margin_bottom = 14.0
+
+[node name="TestingConcluido" type="Label" parent="."]
+margin_left = 222.0
+margin_top = 27.0
+margin_right = 262.0
+margin_bottom = 41.0

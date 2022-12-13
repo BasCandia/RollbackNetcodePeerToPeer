@@ -207,7 +207,16 @@ func _physics_process(_delta):
 	var FPS = get_parent().get_node("FPS")
 	Frame_Counter_Label.text = "Frame Counter: " + str(frame_count)
 	FPS.text = "FPS: " + str(Engine.get_frames_per_second())
-	
+	var Testing_Label = get_parent().get_node("Testing")
+	var TestingConcluido_Label = get_parent().get_node("TestingConcluido")
+	if(flag_ms_array):
+		Testing_Label.text = "Testing: ON"
+	if(!flag_ms_array):
+		Testing_Label.text = "Testing: OFF"
+	if frame_count_test >= MINUTO_FPS:
+		TestingConcluido_Label.text = "Prueba Concluida"
+	else:
+		TestingConcluido_Label.text = "Prueba NO Concluida"
 
 func handle_input(): #get inputs, call child functions
 	var pre_game_state = get_game_state()
