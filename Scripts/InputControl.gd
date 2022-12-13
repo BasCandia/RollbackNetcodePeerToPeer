@@ -263,6 +263,16 @@ func _physics_process(_delta):
 	var VcantidadRollbackPruebas = get_parent().get_node("CantidadRollbackPrueba")
 	VcantidadRollback.text = "Cantidad de Rollbacks: "+ str(cantidadDeRollback)
 	VcantidadRollbackPruebas.text = "Cantidad de Rollback en Prueba: "+ str(cantidadDeRollbackPrueba)
+	var Testing_Label = get_parent().get_node("Testing")
+	var TestingConcluido_Label = get_parent().get_node("TestingConcluido")
+	if(flag_ms_array):
+		Testing_Label.text = "Testing: ON"
+	if(!flag_ms_array):
+		Testing_Label.text = "Testing: OFF"
+	if frame_count_test >= MINUTO_FPS:
+		TestingConcluido_Label.text = "Prueba Concluida"
+	else:
+		TestingConcluido_Label.text = "Prueba NO Concluida"
 	
 
 func handle_input(): #get input, call child functions and run rollback if necessary
